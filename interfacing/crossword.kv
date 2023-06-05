@@ -1,19 +1,12 @@
 #:kivy 2.2.0
 
-<CrosswordLayout>:
-    Button:
-        text: "page 1"
-    Color:
-        rgba: 1, 1, 1, 1
+# Label:
+#     text_size: self.size
+#     halign: "right"
+#     valign: "middle"
 
-<PuzzleLabel>:
-    Button:
-        text: "page 1"
-
-<PuzzleText>:
-    Button:
-        text: "page 1"
-
-<CrosswordGame>:
-    Button:
-        text: "page 1"
+<NavigationLayout>
+    AnchorLayout:
+        # id: anchor
+        # orientation: "lr-tb"
+        size: self.size
