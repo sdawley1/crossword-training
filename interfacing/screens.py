@@ -5,7 +5,7 @@ from kivy.uix.layout import Layout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 #
-from layouts import NavigationLayout, PuzzleLayout
+from layouts import NavigationLayout, HomeLayout
 
 class HomeScreen(Screen):
     def __init__(self, name: str="Home"):

@@ -7,20 +7,27 @@ from kivy.uix.anchorlayout import AnchorLayout
 # Custom imports
 from buttons import Navigation
     
-class PuzzleLayout(AnchorLayout):
+class HomeLayout(AnchorLayout):
     """
     Control display of puzzles
     """
-    pass
+    def __init__(self, anchor_x: str="center", anchor_y: str="center", **kwargs):
+        super().__init__(**kwargs)
+        self.anchor_x = anchor_x
+        self.anchor_y = anchor_y
+        self.add_widget(Navigation(text="Difficulty")) # This is wrong but I'm too tired to fix it
 
 class NavigationLayout(AnchorLayout):
     """
     Control display of navigational buttons
     """
-    def __init__(self, anchor_x: str="left", anchor_y: str="top"):
-        super().__init__()
+    def __init__(self, anchor_x: str="center", anchor_y: str="center", **kwargs):
+        super().__init__(**kwargs)
         self.anchor_x = anchor_x
         self.anchor_y = anchor_y
+        self.add_widget(Navigation(text="Previous"))
+        self.add_widget(Navigation(text="Next"))
+        self.add_widget(Navigation(text="Menu"))
 
     # def add_nav_button(self, btn: Button) -> None:
     #     """Add navigational buttons to layout"""
@@ -28,9 +35,11 @@ class NavigationLayout(AnchorLayout):
     #     self.ids.anchor.add_widget(butt)
     #     return
     
+HomeMenu = HomeLayout()
+
 NavPrev = NavigationLayout(anchor_x="center", anchor_y="center")
-NavNext = NavigationLayout(anchor_x="right", anchor_y="top")
-NavMenu = NavigationLayout(anchor_x="left", anchor_y="top")
+NavNext = NavigationLayout(anchor_x="center", anchor_y="center")
+NavMenu = NavigationLayout(anchor_x="center", anchor_y="center")
 
 if __name__ == "__main__":
     pass
