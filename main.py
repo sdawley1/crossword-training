@@ -2,6 +2,7 @@
 Driver script for crossword trainer
 """
 from clue_manips.find_clue import JSONParser
+from interfacing.build_interface import CrosswordApp
 
 def main() -> None:
     parser = JSONParser("./web_scraping/clue_data.txt", method="weekday")
@@ -12,4 +13,5 @@ def main() -> None:
     return
 
 if __name__ == "__main__":
+    # CrosswordApp().run()
     main()

@@ -6,7 +6,6 @@ TO-DO LIST:
 - Attach all metadata to each Question instance (author, date, etc.)
     - Get neighboring clues (?)
 """
-import json
 import requests
 import datetime
 from bs4 import BeautifulSoup, Tag
