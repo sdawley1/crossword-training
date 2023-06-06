@@ -1,7 +1,7 @@
 """
 Driver script for crossword trainer
 """
-from clue_manips.finding_temp import JSONParser
+from clue_manips.find_clue import JSONParser
 # from interfacing.build_interface import CrosswordApp
 
 def main() -> None:
