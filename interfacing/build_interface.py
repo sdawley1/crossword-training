@@ -5,12 +5,11 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.graphics import Canvas, Color
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 # Custom imports
 from screens import PuzzleScreen, HomeScreen # Custom screens
-from buttons import PrevBtn, NextBtn, MenuBtn # Custom buttons
-from layouts import HomeMenu, NavPrev, NavNext, NavMenu # Custom layouts for each button
+from buttons import DifficultySlider, MenuButton # Custom buttons
+from layouts import HomeLayout, NavigationLayout # Custom layouts for each button
 
 class CrosswordGame(Widget):
     """
@@ -18,9 +17,8 @@ class CrosswordGame(Widget):
     """
     def __init__(self):
         super().__init__()
-        with self.canvas:
-            Color(rgba=(1,0,0,1))
-    pass
+        # with self.canvas:
+        #     Color(rgba=(1,0,0,1))
 
 class CrosswordApp(App):
     """
@@ -35,24 +33,52 @@ class CrosswordApp(App):
         hs = HomeScreen(name="Home")
         ps = PuzzleScreen(name="Puzzle")
 
-        # Build home screen
-        hs.assign_layout(HomeMenu)
+        # Menus
+        HomeMenu = HomeLayout()
 
-        # Build puzzle screen(s)
-        # Add navigation buttons on top of existing layout then append to unique puzzle screen
-        for layout, btn in zip([NavPrev, NavNext, NavMenu], [PrevBtn, NextBtn, MenuBtn]):
-            # layout.add_widget(btn)
-            ps.assign_layout(layout)
+        # Build individual buttons for home screen
+        DiffBtn = MenuButton("Difficulty", color=(1,0,0,1))
+        dslider = HomeLayout(anchor_x="left", anchor_y="top")
+        PrefBtn = MenuButton("Prefilled", color=(1,0,0,1))
+        dslider = HomeLayout(anchor_x="left", anchor_y="center")
+        difficulty = DifficultySlider()
+        dslider = HomeLayout(anchor_x="left", anchor_y="top")
+
+        dslider.add_widget(DiffBtn)
+        dslider.add_widget(PrefBtn)
+        dslider.add_widget(difficulty)
+
+        # Build individual buttons for puzzle screen
+        # PrevBtn = MenuButton(text="Previous", color=(1,0,0,1))
+        # NextBtn = MenuButton(text="Next", color=(0,1,0,1))
+        # MenuBtn = MenuButton(text="Menu", color=(0,0,1,1))
+
+        # Create layouts to import in build_interface.py
+        HomeMenu.add_widget(dslider)
+        # NavPrev = NavigationLayout(anchor_x="left", anchor_y="top")
+        # NavNext = NavigationLayout(anchor_x="right", anchor_y="top")
+        # NavMenu = NavigationLayout(anchor_x="center", anchor_y="top")
+        # NavPrev.add_widget(PrevBtn)
+        # NavNext.add_widget(NextBtn)
+        # NavMenu.add_widget(MenuBtn)
+
+        # Build home screen
+        # temp.add_widget(NavPrev)
+        # temp.add_widget(NavNext)
+        # temp.add_widget(NavMenu)
+
+        hs.add_widget(HomeMenu)
+        # ps.add_widget(temp)
 
         # Add completed screens
-        sm.add_widget(hs)
-        sm.add_widget(ps)
-        sm.switch_to(ps, direction='right', duration=1.0)
+        # sm.add_widget(hs)
+        # sm.add_widget(ps)
+        # sm.switch_to(ps, direction="right", duration=2.0)
 
         # Add all screens to game
-        game.add_widget(sm)
+        # game.add_widget(sm)
 
-        return game
+        return hs
 
 if __name__ == "__main__":
     CrosswordApp().run()

@@ -31,18 +31,23 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
         self.method = method
         self.weekday = day
 
-    def _line2clue(self, line: str) -> Clue:
-        """Convert (raw) line from txt file to Clue()"""
-        question, answer, alignment, author, weekday, date = line.strip("\n").split("0x1F")
-        print(f"({weekday}, {date}) {question} -> {answer}")
-        return Clue(question, answer, alignment, author, weekday, date)
+    def _generate_lines(self):
+        """Generate next line (question, answer, etc.) from text file for use in posing question"""
+        for line in open(self.filename, "r").readlines():
+            yield line
+
+    # def _line2clue(self, line: str) -> Clue:
+    #     """Convert (raw) line from txt file to Clue()"""
+    #     question, answer, alignment, author, weekday, date = line.strip("\n").split("0x1F")
+    #     print(f"({weekday}, {date}) {question} -> {answer}")
+    #     return Clue(question, answer, alignment, author, weekday, date)
     
     def _prefill_answer(self, line: str, prefilled: str) -> int:
         """Convert prefilled difficulty to integer"""
         _, answer, _, _, _, _ = line.strip("\n").split("0x1F")
         n = len(answer)
         partial_answer = ["_" for _ in range(n)]
-        p2i = {"easy": np.floor(n/2), "medium": np.floor(n/3), "hard": np.floor(n/4)}[prefilled] # CHANGE THIS AT SOME POINT
+        p2i = {"easy": np.floor(n/2), "medium": np.floor(n/3), "hard": np.floor(n/4)}[prefilled] # CHANGE THIS AT SOME POINT (?)
         while p2i > 0:
             rc = np.random.randint(n-1)
             if partial_answer[rc] == "_":
@@ -59,11 +64,11 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
         else:
             return partial_answer
         
-    def _pose_question(self, line: str, prefilled: str=None) -> Clue:
+    def _pose_question(self, line: str, prefilled: str=None) -> tuple:
         """Convert (raw) line from txt file to Clue()"""
         question, answer, alignment, author, weekday, date = line.strip("\n").split("0x1F")
         partial_answer = self._partial_answer(line, prefilled)
-        stdin = input(f"({weekday}, {date}) {question} = {partial_answer} ({len(answer)} letters) ", )
+        stdin = input(f"({weekday}, {date}) {question} = {partial_answer} ({len(answer)} letters) ", ).strip()
         if stdin.upper() == "EXIT":
             toggle = False
         elif stdin.upper() == answer.upper():
@@ -78,35 +83,34 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
         """Changes method of filtering questions"""
         self.method = method
     
-    def _question_filter(filter) -> str:
+    def _question_filter(filter, *args, **kwargs) -> str:
         """
         Filter questions (potentially randomly) to extract lines from clue_data.txt
         'filter' is a function which specifies how specifies how questions should be chosen
         Returns raw string from JSON file 
         """
         @functools.wraps(filter)
-        def filter_wrap(self, *args) -> None:
-            return filter(self, *args)
+        def filter_wrap(self, *args, **kwargs) -> None:
+            return filter(self, *args, **kwargs)
         return filter_wrap
 
     @_question_filter
     def qchoice_randomly(self, iostream, prefilled: str=None) -> Clue:
         """
         Choose clues randomly
-        Note that calling doing anything with iostream before calling iostream.readlines() removes stream and leads to error later
+        Note that calling/doing anything with iostream before calling iostream.readlines() removes stream and leads to error
         """
-        spec = np.random.randint(100000) # Random int on [0 - approx. len(iostream)]
+        spec = np.random.randint(109656) # Random int on [0 - approx. len(iostream)] # change this at some point
         return self._pose_question(iostream.readlines()[spec], prefilled)
 
     @_question_filter
-    def qchoice_by_weekday(self, iostream, day: str, prefilled: str=None) -> Clue:
+    def qchoice_by_weekday(self, line: str, day: str, prefilled: str=None) -> Clue:
         """Choose clues based only on day of week they were published"""
-        for line in iostream.readlines():
-            if day.upper() in line.upper():
-                return self._pose_question(line, prefilled)
+        if day.upper() in line.upper():
+            return self._pose_question(line, prefilled)
     
     @_question_filter
-    def qchoice_by_difficulty(self, iostream, difficulty: str, prefilled: str=None) -> Clue:
+    def qchoice_by_difficulty(self, line: str, difficulty: str, prefilled: str=None) -> Clue:
         """
         Choose clues based on relative difficulty (established from day of the week published)
         As it stands,
@@ -116,13 +120,9 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
             EXPERT = Sunday
         """
         # Local function for converting difficulty to day(s) of the week
-        diff2days = lambda diff: {
-            "EASY": ["MONDAY", "TUESDAY"], "MEDIUM": ["WEDNESDAY", "THURSDAY"], "HARD": ["FRIDAY", "SATURDAY"], "EXPERT": ["SUNDAY"]
-            }[diff] # returns a list of days
-        days = diff2days(difficulty.upper())
-        for line in iostream.readlines():
-            if days[0] in line or days[-1] in line.upper():
-                return self._pose_question(line, prefilled)
+        days = {"EASY": ["MONDAY", "TUESDAY"], "MEDIUM": ["WEDNESDAY", "THURSDAY"], "HARD": ["FRIDAY", "SATURDAY"], "EXPERT": ["SUNDAY"]}[difficulty.upper()] # returns a list of days
+        if days[0] in line or days[-1] in line.upper():
+            return _, self._pose_question(line, prefilled)
 
 if __name__ == "__main__":
     parser = JSONParser("./web_scraping/clue_data.txt", method="weekday")
