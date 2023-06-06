@@ -112,6 +112,10 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
         return filter_wrap
 
     @_question_filter
+    def qchoice(self, clue: Clue, prefilled: str=None) -> tuple:
+        return self._pose_question(clue, prefilled)
+
+    @_question_filter
     def qchoice_randomly(self, iostream, prefilled: str=None) -> Clue:
         """
         Choose clues randomly
@@ -120,10 +124,6 @@ class JSONParser: # Deprecated name because I'm not using .json files anymore. W
         spec = np.random.randint(109656) # Random int on [0 - approx. len(iostream)] # change this at some point
         line = iostream.readlines()[spec] 
         return self._pose_question(self._line2clue(line), prefilled)
-    
-    @_question_filter
-    def qchoice(self, clue: Clue, prefilled: str=None) -> tuple:
-        return self._pose_question(clue, prefilled)
 
 if __name__ == "__main__":
     pass
