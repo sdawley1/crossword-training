@@ -2,14 +2,12 @@
 Driver script to build app interface
 """
 from kivy.app import App
+from kivy.core.text import LabelBase
 from kivy.uix.widget import Widget
+from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.graphics import Canvas, Color
-from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
-# Custom imports
-from screens import PuzzleScreen, HomeScreen # Custom screens
-from buttons import DifficultySlider, MenuButton # Custom buttons
-from layouts import HomeLayout, NavigationLayout # Custom layouts for each button
+from kivy.uix.boxlayout import BoxLayout
+from kivy.graphics import Color, Rectangle
 
 class CrosswordGame(Widget):
     """
@@ -17,8 +15,21 @@ class CrosswordGame(Widget):
     """
     def __init__(self):
         super().__init__()
-        # with self.canvas:
-        #     Color(rgba=(1,0,0,1))
+        # LabelBase.register(name="orphans", fn_regular="/System/Library/Fonts/dream_orphans/'Dream Orphans.otf'")
+        
+
+# class tempButton(Button):
+#     def __init__(self, text: str):
+#         super().__init__()
+#         with self.canvas.before:
+#             # Color(1,1,1,0.5)
+#             self.rect = Rectangle(pos=self.pos, size=self.size)
+#         self.bind(size=self.update_rect)
+
+#     def update_rect(self, instance, value):
+#         self.rect.pos = self.pos
+#         self.rect.size = self.size
+
 
 class CrosswordApp(App):
     """
@@ -26,59 +37,38 @@ class CrosswordApp(App):
     """
     def build(self):
         # Initialize game
-        game = CrosswordGame()
-        
-        # Initialize screens and screen manager
-        sm = ScreenManager(transition=SwapTransition())
-        hs = HomeScreen(name="Home")
-        ps = PuzzleScreen(name="Puzzle")
+        root = CrosswordGame()
+        root.size_hint = (1, 1) # Fix root widget to take up entire window
 
-        # Menus
-        HomeMenu = HomeLayout()
+        # # Container where all other layouts will be held
+        # title_slide = BoxLayout(orientation="vertical", pos=(root.width, root.height), size_hint=(1,1))
 
-        # Build individual buttons for home screen
-        DiffBtn = MenuButton("Difficulty", color=(1,0,0,1))
-        dslider = HomeLayout(anchor_x="left", anchor_y="top")
-        PrefBtn = MenuButton("Prefilled", color=(1,0,0,1))
-        dslider = HomeLayout(anchor_x="left", anchor_y="center")
-        difficulty = DifficultySlider()
-        dslider = HomeLayout(anchor_x="left", anchor_y="top")
+        # # Make some fun containers
+        # header = BoxLayout(orientation="horizontal", spacing=100, size_hint=(1,1))
+        # buttons = BoxLayout(orientation="vertical", spacing=100, size_hint=(1,1))
+        # citation = BoxLayout(orientation="horizontal", spacing=100, size_hint=(1,1))
 
-        dslider.add_widget(DiffBtn)
-        dslider.add_widget(PrefBtn)
-        dslider.add_widget(difficulty)
+        # # Make some fun labels
+        # title = Label(text="Title")
+        # author = Label(text="Author")
 
-        # Build individual buttons for puzzle screen
-        # PrevBtn = MenuButton(text="Previous", color=(1,0,0,1))
-        # NextBtn = MenuButton(text="Next", color=(0,1,0,1))
-        # MenuBtn = MenuButton(text="Menu", color=(0,0,1,1))
+        # # Make some fun buttons
+        # play = Button(text="Play")
 
-        # Create layouts to import in build_interface.py
-        HomeMenu.add_widget(dslider)
-        # NavPrev = NavigationLayout(anchor_x="left", anchor_y="top")
-        # NavNext = NavigationLayout(anchor_x="right", anchor_y="top")
-        # NavMenu = NavigationLayout(anchor_x="center", anchor_y="top")
-        # NavPrev.add_widget(PrevBtn)
-        # NavNext.add_widget(NextBtn)
-        # NavMenu.add_widget(MenuBtn)
+        # # Add all those fun buttons and labels we just made
+        # header.add_widget(title)
+        # buttons.add_widget(play)
+        # citation.add_widget(author)
 
-        # Build home screen
-        # temp.add_widget(NavPrev)
-        # temp.add_widget(NavNext)
-        # temp.add_widget(NavMenu)
+        # # Add all those fun layouts we just made
+        # title_slide.add_widget(header)
+        # title_slide.add_widget(buttons)
+        # title_slide.add_widget(citation)
 
-        hs.add_widget(HomeMenu)
-        # ps.add_widget(temp)
+        # # Add that layout to the game
+        # root.add_widget(title_slide)
 
-        # Add completed screens
-        # sm.add_widget(hs)
-        # sm.add_widget(ps)
-        # sm.switch_to(ps, direction="right", duration=2.0)
-
-        # Add all screens to game
-        # game.add_widget(sm)
-
-        return hs
+        return root # Return the root Widget()
 
 if __name__ == "__main__":
     CrosswordApp().run()
