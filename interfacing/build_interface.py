@@ -1,74 +1,93 @@
 """
 Driver script to build app interface
+TO-DO LIST
+----------
+- Change color of accordion titles
+- Make the play button look nicer
 """
 from kivy.app import App
-from kivy.core.text import LabelBase
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button
+from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.core.window import Window
+from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color, Rectangle
-
+#
+from accordions import PlayAccordionItem, AccordionLayout, StartButton, FancyLabel
+    
 class CrosswordGame(Widget):
     """
     Main widget for game
     """
-    def __init__(self):
-        super().__init__()
-        # LabelBase.register(name="orphans", fn_regular="/System/Library/Fonts/dream_orphans/'Dream Orphans.otf'")
-        
+    pass
 
-# class tempButton(Button):
-#     def __init__(self, text: str):
-#         super().__init__()
-#         with self.canvas.before:
-#             # Color(1,1,1,0.5)
-#             self.rect = Rectangle(pos=self.pos, size=self.size)
-#         self.bind(size=self.update_rect)
 
-#     def update_rect(self, instance, value):
-#         self.rect.pos = self.pos
-#         self.rect.size = self.size
+class NewBoxLayout(BoxLayout):
+    """
+    Main widget for game
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
+    def append_widgets(self, *args) -> None:
+        """Add widgets to root"""
+        for w in args:
+            self.add_widget(w)
 
 class CrosswordApp(App):
     """
     Builds and runs app
     """
     def build(self):
-        # Initialize game
-        root = CrosswordGame()
-        root.size_hint = (1, 1) # Fix root widget to take up entire window
+        big_font = 96
+        font = "../fonts/Dream-Orphans.otf"
+        Window.clearcolor = (0, 0, 1, 0.8) # set background
+        sm = ScreenManager()
+        title_screen = Screen(name="Home")
+        puzzle_screen = Screen(name="Puzzle")
 
-        # # Container where all other layouts will be held
-        # title_slide = BoxLayout(orientation="vertical", pos=(root.width, root.height), size_hint=(1,1))
+        # Initialize the ancestor layout
+        root = NewBoxLayout(size_hint=(1,1), orientation="vertical")
 
-        # # Make some fun containers
-        # header = BoxLayout(orientation="horizontal", spacing=100, size_hint=(1,1))
-        # buttons = BoxLayout(orientation="vertical", spacing=100, size_hint=(1,1))
-        # citation = BoxLayout(orientation="horizontal", spacing=100, size_hint=(1,1))
+        # Title and author labels
+        title_label = Label(text="NYT Crossword Puzzler\na game by Me", font_size=big_font, font_name=font)
+        
+        # Container to hold all navigational buttons (sorting, difficulty, aid)
+        button_container = AccordionLayout(orientation="vertical")
 
-        # # Make some fun labels
-        # title = Label(text="Title")
-        # author = Label(text="Author")
+        # Sorting Option
+        sorting = PlayAccordionItem(title="Sorting", font_name=font)
+        sorting_buttons = AccordionLayout(orientation="horizontal")
+        method = ["Random", "Day", "Difficulty"]
+        descrip = ["Roll the dice and choose questions randomly", "Restrict questions to a particular day", "Restrict questions to a particular difficulty"]
+        sorting.configure_accordion(sorting_buttons, method, descrip)
 
-        # # Make some fun buttons
-        # play = Button(text="Play")
+        # Difficulty Option
+        difficulty = PlayAccordionItem(title="Difficulty", font_name=font)
+        difficulty_buttons = AccordionLayout(orientation="horizontal")
+        diff = ["Easy", "Medium", "Hard", "Expert"]
+        descrip = ["Takin' it Easy", "Something funny", "Something funnny", "There's no God here except for you"]
+        difficulty.configure_accordion(difficulty_buttons, diff, descrip)
 
-        # # Add all those fun buttons and labels we just made
-        # header.add_widget(title)
-        # buttons.add_widget(play)
-        # citation.add_widget(author)
+        # Completeness Option
+        aid = PlayAccordionItem("Completeness", font_name=font)
+        aid_buttons = AccordionLayout(orientation="horizontal")
+        descrip = ["1/2 of the answer is provided", "1/3 of the answer is provided", "1/4 of the answer is provided", "No help (like Pompeii)"]
+        aid.configure_accordion(aid_buttons, diff, descrip)
 
-        # # Add all those fun layouts we just made
-        # title_slide.add_widget(header)
-        # title_slide.add_widget(buttons)
-        # title_slide.add_widget(citation)
+        # Add sorting, difficulty, and completeness options to button container
+        button_container.append_widgets(sorting, difficulty, aid)
 
-        # # Add that layout to the game
-        # root.add_widget(title_slide)
+        start_button = StartButton(sm=sm, text="Play")
+        start_button.background_color = (0,0,1,1)
 
-        return root # Return the root Widget()
+        # Add layouts to root in specific order
+        root.append_widgets(title_label, button_container, start_button)
+        title_screen.add_widget(root)
+
+        sm.add_widget(title_screen)
+        sm.add_widget(puzzle_screen)
+        
+        return sm # Return the root Widget()
 
 if __name__ == "__main__":
     CrosswordApp().run()

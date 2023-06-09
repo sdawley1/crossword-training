@@ -1,15 +1,19 @@
 #:kivy 2.2.0
 
-<RoundedButton@Button>
-    background_color: (0, 0, 0, 0)
-    background_normal: ""
+<FancyButton@Button>
+    font_size: 48
+    font_name: "../fonts/Dream-Orphans.otf"
+    background_color: (0.0, 0.0, 1.0, .5)
+    # on_press: self.color_update
+
+<NewBoxLayout>:
+    # Initialize canvas to be greyish and fit the entire window (fitting it to the window is the bane of my existence)
     canvas.before:
         Color:
-            rgba: (1, 1, 1, 1)
-        RoundedRectangle:
-            size: (self.size[0] / 1.1, self.size[1] / 1.1)
-			pos: (self.pos[0] * 1.1, self.pos[1] * 1.1)
-			radius: [100]
+            rgba: (1, 1, 1, 0.5) 
+        Rectangle:
+            pos: self.pos
+            size: self.size
 
 <CrosswordGame>:
     # Initialize canvas to be greyish and fit the entire window (fitting it to the window is the bane of my existence)
@@ -19,45 +23,77 @@
         Rectangle:
             pos: self.pos
             size: self.size
-    BoxLayout: # Layout of home screen 
-        size: root.size
-        orientation: "vertical"
-        cols: 1
-        rows: 3
-        color: (0, 0, 0, 1)
-        font_size: 96
-        text_color: (0, 0, 0, 1)
-        font_name: "../fonts/Dream-Orphans.otf"
-        Label: # Game information
-            text: "NYT Crossword Puzzler"
-            ha: "center"
-            font_size: self.parent.font_size * 1.5
-            font_name: self.parent.font_name
-        BoxLayout: # Contains utility buttons
-            cols: 3
-            orientation: "horizontal"
-            color: (0, 0, 0, 1)
-            font_size: 96
-            font_name: "../fonts/Dream-Orphans.otf"
-            RoundedButton:
-                text: "Play"
-                color: self.parent.color
-                font_size: self.parent.font_size
-                font_name: self.parent.font_name
-            RoundedButton:
-                text: "Difficulty"
-                color: self.parent.color
-                font_size: self.parent.font_size
-                font_name: self.parent.font_name
-            RoundedButton:
-                text: "Help"
-                color: self.parent.color
-                font_size: self.parent.font_size
-                font_name: self.parent.font_name
-        Label: # Author information
-            text: "A game by Sam Dawley"
-            font_size: self.parent.font_size
-            font_name: self.parent.font_name
-
-# <BoxLayout>
-#     size: (root.width, root.height)
+#     BoxLayout: # Layout of home screen 
+#         size: root.size
+#         orientation: "vertical"
+#         cols: 1
+#         rows: 3
+#         color: (0, 0, 0, 1)
+#         font_size: 96
+#         text_color: (0, 0, 0, 1)
+#         font_name: "../fonts/Dream-Orphans.otf"
+#         Label: # Game information
+#             text: "NYT Crossword Puzzler"
+#             ha: "center"
+#             font_size: self.parent.font_size * 1.5
+#             font_name: self.parent.font_name
+#         Accordion: # Contains utility buttons
+#             cols: 3
+#             orientation: "vertical"
+#             color: (1, 1, 1, 0.5)
+#             font_size: 96
+#             font_name: "../fonts/Dream-Orphans.otf"
+#             PlayAccordionItem:
+#                 title: "Difficulty: %s" % "difficulty"
+#                 color: self.parent.color
+#                 font_size: self.parent.font_size
+#                 font_name: self.parent.font_name
+#                 background_color: (0.0, 0.0, 1.0, .5)
+#                 AccordionLayout:
+#                     cols: 4
+#                     rows: 1
+#                     FancyButton:
+#                         text: "Easy"
+#                     FancyButton:
+#                         text: "Medium"
+#                     FancyButton:
+#                         text: "Hard"
+#                     FancyButton:
+#                         text: "Expert"
+#             PlayAccordionItem:
+#                 title: "Help: %s" % "difficulty"
+#                 color: self.parent.color
+#                 font_size: self.parent.font_size
+#                 font_name: self.parent.font_name
+#                 AccordionLayout:
+#                     cols: 4
+#                     rows: 1
+#                     FancyButton:
+#                         text: "Easy"
+#                         background_color: (0.0, 0.0, 1.0, .75)
+#                     FancyButton:
+#                         text: "Medium"
+#                     FancyButton:
+#                         text: "Hard"
+#                     FancyButton:
+#                         text: "Expert"
+#             PlayAccordionItem:
+#                 title: "Play: sort by %s" % "string"
+#                 color: self.parent.color
+#                 font_size: self.parent.font_size
+#                 font_name: self.parent.font_name
+#                 AccordionLayout:
+#                     cols: 3
+#                     rows: 1
+#                     FancyButton:
+#                         text: "sort by Random"
+#                         # on_press: self.update
+#                         background_color: (0.0, 0.0, 1.0, .75)
+#                     FancyButton:
+#                         text: "sort by Weekday"
+#                     FancyButton:
+#                         text: "sort by Difficulty"
+#         Label: # Author information
+#             text: "A game by Sam Dawley"
+#             font_size: self.parent.font_size
+#             font_name: self.parent.font_name
